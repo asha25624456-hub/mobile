@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * POST /user/read_categories.php
+ * รายการหมวดหมู่วัสดุที่เปิดใช้งาน
+ *
+ * สิทธิ์   : User (Authorization: Bearer <token>)
+ * รับค่า   : -
+ */
+
+require_once __DIR__ . '/../bootstrap.php';
+
+requireUser($conn);
+
+$result = $conn->query("
+    SELECT
+        id,
+        category_code,
+        category_name,
+        description,
+        status
+    FROM categories
+    WHERE status = 'ACTIVE'
+    ORDER BY category_name ASC
+");
+
+$data = [];
+
+while ($row = $result->fetch_assoc()) {
+    $data[] = $row;
+}
+
+responseSuccess([
+    "data" => $data
+]);
